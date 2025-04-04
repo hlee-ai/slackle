@@ -1,9 +1,13 @@
 """
 slack command registry
 """
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from slackle.core.app import Slackle
+from .dependencies import handle_command_with_dependencies
 from slackle.exc import CommandNotFoundError
-from slackle.types.base import BaseSlackCommand
-from slackle.types.data import SlackCommandMeta
+from .types import BaseSlackCommand, SlackCommandMeta
 from typing import Dict, Type, Optional, List, Iterator
 from collections import defaultdict
 
@@ -92,3 +96,12 @@ class SlackCommand:
         """
         for meta in other.all():
             self._registry[meta.command] = meta
+
+    async def dispatch(self, command: str, text: str, user_id: str, app: "Slackle") -> str:
+        meta = self._registry.get(command)
+        if not meta:
+            return f"No command registered for '{command}'"
+
+        return await handle_command_with_dependencies(meta.handler, app, text, user_id)
+
+__all__ = ["SlackCommand"]

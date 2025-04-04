@@ -1,7 +1,7 @@
 from typing import Any, Dict, Type, Optional, TypeVar
 
 from slackle.exc import FormatterNotFoundError
-from slackle.types.base import BaseFormatter
+from .types import BaseFormatter
 
 T = TypeVar("T")
 T_Formatter = TypeVar("T_Formatter", bound=BaseFormatter)
@@ -69,3 +69,5 @@ class Formatter:
         :param other: Another Formatter instance to merge from
         """
         self._registry.update(other.all())
+
+__all__ = ["Formatter"]

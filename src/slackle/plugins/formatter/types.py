@@ -1,16 +1,9 @@
 from abc import ABC, abstractmethod
+
 from typing import Generic, TypeVar, Any, Optional, Type
 
-
-class BaseSlackCommand(ABC):
-    """
-    Base class for all Slack commands.
-    """
-    description: str = ""
-
-    @abstractmethod
-    def handle(self, text: str, user_id: str) -> str:
-        raise NotImplementedError("slack command handler must implement handle method")
+from slackle.constants import SlackResponseType
+from slackle.types.response import SlackMarkdown, SlackBlock, SlackResponse
 
 
 T = TypeVar("T")
@@ -42,7 +35,7 @@ class BaseFormatter(ABC, Generic[T, P]):
         return data
 
     @abstractmethod
-    def to_slack_markdown(self) -> str:
+    def to_slack_markdown(self) -> SlackMarkdown:
         """Return Slack markdown format."""
         raise NotImplementedError("Formatter must implement to_slack_markdown method")
 
@@ -50,12 +43,19 @@ class BaseFormatter(ABC, Generic[T, P]):
         """Return plain text format."""
         return str(self.data)
 
-    def to_slack_object(self) -> dict:
+    def to_slack_block(self) -> SlackBlock:
         """Return a Slack-compatible block object."""
-        return {
+        return SlackBlock(blocks=[{
             "type": "section",
             "text": {
                 "type": "mrkdwn",
-                "text": self.to_slack_markdown()
+                "text": self.to_slack_markdown().text
             }
-        }
+        }])
+
+    def to_slack_response(self) -> SlackResponse:
+        """Return a Slack-compatible response object."""
+        return SlackResponse(
+            blocks=self.to_slack_block(),
+            response_type=SlackResponseType.EPHEMERAL
+        )
