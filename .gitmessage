@@ -1,0 +1,21 @@
+# 📝 Commit Message Guidelines
+# ----------------------------
+# Format: <type>(<scope>): <summary>
+#
+# Types:
+#   feat     - A new feature
+#   fix      - A bug fix
+#   docs     - Documentation only
+#   style    - Code style (whitespace, formatting)
+#   refactor - Refactoring code without changing behavior
+#   test     - Add or update tests
+#   chore    - Build process or tooling
+#   perf     - Performance improvements
+
+# Examples:
+#   feat(plugin): add support for plugin-based command registry
+#   fix(slack): correctly handle slash command payload
+#   docs: update README with install instructions
+
+# ----------------------------
+# Write your commit message below:
