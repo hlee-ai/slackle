@@ -1,15 +1,20 @@
 """
 slack command registry
 """
+
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from slackle.core.app import Slackle
-from .dependencies import handle_command_with_dependencies
-from slackle.exc import CommandNotFoundError
-from .types import BaseSlackCommand, SlackCommandMeta
-from typing import Dict, Type, Optional, List, Iterator
+
 from collections import defaultdict
+from typing import Dict, Iterator, List, Optional, Type
+
+from slackle.exc import CommandNotFoundError
+
+from .dependencies import handle_command_with_dependencies
+from .types import BaseSlackCommand, SlackCommandMeta
+
 
 class SlackCommand:
     def __init__(self):
@@ -39,7 +44,13 @@ class SlackCommand:
     def register_meta(self, meta: SlackCommandMeta):
         self._registry[meta.command] = meta
 
-    def register(self, command: str, description: Optional[str] = None, group: Optional[str] = None, visible: bool = True):
+    def register(
+        self,
+        command: str,
+        description: Optional[str] = None,
+        group: Optional[str] = None,
+        visible: bool = True,
+    ):
         """
         Decorator to register a Slack command handler class.
 
@@ -66,7 +77,12 @@ class SlackCommand:
 
         return decorator
 
-    def hidden_command(self, command: str, description: Optional[str] = None, group: Optional[str] = None):
+    def hidden_command(
+        self,
+        command: str,
+        description: Optional[str] = None,
+        group: Optional[str] = None,
+    ):
         return self.register(command, description=description, group=group, visible=False)
 
     def unregister(self, command: str) -> None:
@@ -103,5 +119,6 @@ class SlackCommand:
             return f"No command registered for '{command}'"
 
         return await handle_command_with_dependencies(meta.handler, app, text, user_id)
+
 
 __all__ = ["SlackCommand"]

@@ -1,11 +1,13 @@
 from contextlib import AsyncExitStack
-from typing import Type, Any, Optional
-from fastapi.dependencies.utils import solve_dependencies
+from typing import TYPE_CHECKING, Any, Optional, Type
+
 from fastapi.dependencies.models import Dependant
+from fastapi.dependencies.utils import solve_dependencies
 from fastapi.requests import Request
+
+from slackle.types.payload import SlackEvent
+
 from .types import BaseSlackCommand
-from slackle.types.event import SlackEvent
-from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from slackle.core.app import Slackle
