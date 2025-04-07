@@ -27,6 +27,7 @@ dev = [
     "pytest",
     "pytest-cov",
     "python-multipart",
+    "aiohttp",
     "pre-commit",
     "commitizen"
 ]
