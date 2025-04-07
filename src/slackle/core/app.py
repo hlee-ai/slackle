@@ -1,23 +1,22 @@
 """
 Slackle App
 """
+
 from contextlib import contextmanager
-from typing import Optional, List, Any, Type, Callable
+from typing import Any, Callable, List, Optional, Type
+
 from fastapi import FastAPI
-from slackle.core.plugin import SlacklePlugin
+
 from slackle.config import SlackleConfig
+from slackle.core.plugin import SlacklePlugin
+
 from .dispatcher import HookDispatcher
 from .slack.client import SlackClient
 from .slack.interface import SlackInterface
 
 
 class Slackle(FastAPI):
-    def __init__(
-            self,
-            *,
-            config: Optional[SlackleConfig] = None,
-            **kwargs
-    ):
+    def __init__(self, *, config: Optional[SlackleConfig] = None, **kwargs):
         super().__init__(**kwargs)
 
         # inner flags
@@ -25,10 +24,10 @@ class Slackle(FastAPI):
         self.__booted = False
 
         # config
-        self._config : SlackleConfig = config or SlackleConfig()
+        self._config: SlackleConfig = config or SlackleConfig()
 
         # inner engines
-        self._slack : SlackInterface = SlackInterface(self._config.app_token)
+        self._slack: SlackInterface = SlackInterface(self._config.app_token)
         self._plugins: List[SlacklePlugin] = []
         self._plugin_attrs = {}
         self._hook_dispatcher = HookDispatcher(self._plugins)
@@ -57,6 +56,15 @@ class Slackle(FastAPI):
         if not hasattr(self, "_hook_dispatcher"):
             raise RuntimeError("Hooks are not available before startup.")
         return self._hook_dispatcher
+
+    def on_event(self, name: str):
+        return self.callback.event(name)
+
+    def on_command(self, name: str):
+        return self.callback.command(name)
+
+    def on_action(self, name: str):
+        return self.callback.action(name)
 
     @contextmanager
     def _plugin_setup(self):
@@ -103,11 +111,14 @@ class Slackle(FastAPI):
     def add_plugin(self, plugin: Type[SlacklePlugin]):
         with self._plugin_setup():
             if not issubclass(plugin, SlacklePlugin):
-                raise TypeError(f"Plugin must be a subclass of SlacklePlugin, got {plugin.__name__}")
+                raise TypeError(
+                    f"Plugin must be a subclass of SlacklePlugin, got {plugin.__name__}"
+                )
             if plugin in self._plugins:
                 raise ValueError(f"Plugin {plugin.__name__} is already registered.")
             _plugin = plugin()
             _plugin.setup(self)
             self._plugins.append(_plugin)
+
 
 __all__ = ["Slackle"]
