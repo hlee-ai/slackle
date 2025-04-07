@@ -1,9 +1,12 @@
-name: CI
+name: Test Slackle
 
 on:
   push:
-    branches: [master]
+    branches:
+      - master
   pull_request:
+    branches:
+      - master
 
 jobs:
   test:

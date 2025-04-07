@@ -1,0 +1,53 @@
+enable:
+  issues: true
+  prs: true
+
+comments:
+  issues: |
+    🙌 Thanks for opening an issue!
+
+    We've scanned your title and description and applied any relevant labels automatically 🏷️  
+    Feel free to update the labels if they don't quite match your intent.
+
+    – slackle bot
+  prs: |
+    🚀 Thanks for the pull request!
+    
+    Based on your title and description, we've auto-labeled this PR to help with triage and release tracking 🧠  
+    Please review and adjust the labels if needed.
+    
+    – slackle bot
+
+labels:
+  'bug':
+    include:
+      - '\bbug[s]?\b'
+    exclude: []
+  'help wanted':
+    include:
+      - '\bhelp( me)?\b'
+    exclude:
+      - '\b\[test(ing)?\]\b'
+  'enhancement':
+    include:
+      - '\bfeat\b'
+    exclude: []
+  'question':
+    include:
+      - '\bquestion\b'
+    exclude: []
+  'minor':
+    include:
+      - '\bminor\b'
+      - '\bfeat\b'
+      - '\brefactor\b'
+      - '\bchore\b'
+    exclude: ['\[test\]']
+  'patch':
+    include:
+      - '\bdocs\b'
+      - '\bfix\b'
+      - '\bbug\b'
+      - '\bstyle\b'
+      - '\btest\b'
+    exclude: []
