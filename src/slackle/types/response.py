@@ -1,14 +1,18 @@
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Union
+
 from slackle.constants import SlackResponseType
+
 
 @dataclass
 class SlackMarkdown:
     text: str
 
+
 @dataclass
 class SlackBlock:
     blocks: List[Dict[str, Any]]
+
 
 @dataclass
 class SlackResponse:

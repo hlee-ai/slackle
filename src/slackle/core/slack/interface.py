@@ -1,6 +1,6 @@
 from typing import Optional
 
-from .callback import SlackCallbackHandler, SlackCallback
+from .callback import SlackCallback
 from .client import SlackClient
 from .handler import SlackPayloadHandler
 
@@ -8,8 +8,8 @@ from .handler import SlackPayloadHandler
 class SlackInterface:
     def __init__(self, token: str):
         self.token = token
-        self._client : Optional[SlackClient] = None  # slack client instance
-        self._handler : Optional[SlackPayloadHandler] = None  # slack
+        self._client: Optional[SlackClient] = None  # slack client instance
+        self._handler: Optional[SlackPayloadHandler] = None  # slack
         self._initialize()
 
     @property
