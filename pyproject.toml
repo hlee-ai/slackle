@@ -2,20 +2,32 @@
 name = "slackle"
 version = "0.1.0"
 description = "A lightweight Slack bot framework for building modular and maintainable Slack bots."
-dependencies = [
-    "fastapi>=0.103.1",
-    "pydantic>=1.10.7",
-    "httpx>=0.24.0",
-    "aiohttp>=3.8.5",
-    "async_timeout>=4.0.2",
-    "typing-extensions>=4.5.0"
-]
+
 authors = [
     { name="Hosung Lee", email="hlee24@snu.ac.kr" }
 ]
+
+requires-python = ">=3.10"
+
 license = "MIT"
 readme = "README.md"
-requires-python = ">=3.10"
+
+dependencies = [
+    "fastapi>=0.115.12",
+    "pydantic>=2.11.2",
+    "slack_sdk>=3.35.0",
+    "starlette>=0.46.1"
+]
+
+[project.optional-dependencies]
+dev = [
+    "black",
+    "isort",
+    "pytest",
+    "pytest-cov",
+    "pre-commit",
+    "commitizen"
+]
 
 [project.urls]
 Homepage = "https://github.com/hlee-ai/slackle"
