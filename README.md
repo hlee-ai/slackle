@@ -3,7 +3,7 @@
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="https://slackle.dev/static/logo-light.png">
       <source media="(prefers-color-scheme: light)" srcset="https://slackle.dev/static/logo-dark.png">
-      <img alt="Slackle" src="https://slackle.dev/static/logo-light.png" width="500">
+      <img alt="Slackle" src="https://slackle.dev/static/logo-dark.png" width="500">
     </picture>
   </a>
 </p>
