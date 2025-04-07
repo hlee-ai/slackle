@@ -1,9 +1,4 @@
-from typing import Protocol, Any, Iterator, TYPE_CHECKING, Optional
-
-from slackle.types.event import SlackPayload
-
-if TYPE_CHECKING:
-    from slackle.core.app import Slackle
+from typing import Any, Iterator, Protocol
 
 
 class SlackCallbackHandler(Protocol):
@@ -11,22 +6,22 @@ class SlackCallbackHandler(Protocol):
     Protocol for a Slack event callback handler.
 
     Implement this protocol with an async function that accepts arbitrary keyword arguments.
-    The event dispatcher will inject only the arguments your handler declares, based on the event context.
+    The event dispatcher will inject only the arguments your handler declares,
+    based on the event context.
 
     Common available keyword arguments include:
     - `app`: the Slackle app instance
     - `slack`: the SlackClient wrapper
     - `payload`: raw SlackPayload object
-    - `request`: the FastAPI request object
-    - `response`: the FastAPI response object
-    - `event`: the event object (e.g., `SlackEvent`)
-    - `event_type`: the type of the event (e.g., `message`, `reaction_added`, etc.)
     - `user_id`: the ID of the user who triggered the event
     - `channel_id`: the ID of the channel where the event occurred
+    - `request`: the FastAPI request object
+    - `response`: the FastAPI response object
     - ...and more depending on the event type.
     """
-    async def __call__(self, **kwargs: Any) -> None:
-        ...
+
+    async def __call__(self, **kwargs: Any) -> None: ...
+
 
 class SlackCallback:
     """
@@ -104,6 +99,7 @@ class SlackCallback:
             self._callbacks[f"events:{event_type}"] = func
             self._events[event_type] = func
             return func
+
         return decorator
 
     def command(self, command_name: str):
@@ -116,7 +112,7 @@ class SlackCallback:
 
     def action(self, action_id: str):
         def decorator(func: SlackCallbackHandler):
-            self._callbacks[f"action:{action_id}"] = func
+            self._callbacks[f"interactivity:{action_id}"] = func
             self._actions[action_id] = func
             return func
 
