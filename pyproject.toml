@@ -30,7 +30,7 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/hlee-ai/slackle"
+Homepage = "https://slackle.dev"
 Repository = "https://github.com/hlee-ai/slackle"
 
 [build-system]
