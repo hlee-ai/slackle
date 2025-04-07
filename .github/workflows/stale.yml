@@ -1,0 +1,15 @@
+name: Close stale issues and PRs
+on:
+  schedule:
+    - cron: '30 1 * * *'
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/stale@v9
+        with:
+          stale-issue-message: '👋 Just a heads-up! This issue has been quiet for 30 days. To keep things tidy, we'll automatically close it in 5 days unless there’s new activity. You can add a comment or remove the `stale` label to keep it open. Thanks for helping us keep slackle clean and focused! ✨'
+          stale-pr-message: '🚀 This pull request has been inactive for 30 days. If there’s no further update, it will be closed in 5 days to keep things tidy. You can comment or remove the `stale` label to keep it alive. Thanks for contributing to slackle! 🙏'
+          days-before-stale: 30
+          days-before-close: 5

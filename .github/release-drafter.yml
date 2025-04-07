@@ -1,0 +1,50 @@
+name-template: 'v$RESOLVED_VERSION'
+tag-template: 'v$RESOLVED_VERSION'
+
+categories:
+  - title: '🚀 Features'
+    labels:
+      - 'feat'
+  - title: '🐛 Bug Fixes'
+    labels:
+      - 'fix'
+  - title: '📝 Documentation'
+    labels:
+      - 'docs'
+  - title: '💄 Style Changes'
+    labels:
+      - 'style'
+  - title: '🔨 Refactoring'
+    labels:
+      - 'refactor'
+  - title: '✅ Tests'
+    labels:
+      - 'test'
+  - title: '🔧 Chores'
+    labels:
+      - 'chore'
+  - title: '⚡ Performance'
+    labels:
+      - 'perf'
+
+change-template: '- $TITLE ([#$NUMBER]($URL))'
+no-changes-template: '- No changes'
+
+version-resolver:
+  major:
+    labels:
+      - 'major'
+  minor:
+    labels:
+      - 'minor'
+  patch:
+    labels:
+      - 'patch'
+  default: patch
+
+template: |
+  ## What’s Changed
+
+  $CHANGES
+
+  **Full Changelog**: [$PREVIOUS_TAG...$RESOLVED_TAG]($REPOSITORY/compare/$PREVIOUS_TAG...$RESOLVED_TAG)
