@@ -1,10 +1,12 @@
-from typing import Any, Dict, Type, Optional, TypeVar
+from typing import Any, Dict, Optional, Type, TypeVar
 
 from slackle.exc import FormatterNotFoundError
+
 from .types import BaseFormatter
 
 T = TypeVar("T")
 T_Formatter = TypeVar("T_Formatter", bound=BaseFormatter)
+
 
 class Formatter:
     def __init__(self):
@@ -44,7 +46,10 @@ class Formatter:
                 raise TypeError("Registered class must subclass BaseFormatter")
 
             if data_type in self._registry and not override:
-                print(f"Warning: formatter for {data_type} already registered. Use override=True to force.")
+                print(
+                    f"Warning: formatter for {data_type} already registered. "
+                    f"Use override=True to force."
+                )
             self._registry[data_type] = cls
             return cls
 
@@ -69,5 +74,6 @@ class Formatter:
         :param other: Another Formatter instance to merge from
         """
         self._registry.update(other.all())
+
 
 __all__ = ["Formatter"]
