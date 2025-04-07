@@ -23,6 +23,7 @@ dependencies = [
 dev = [
     "black",
     "isort",
+    "flake8",
     "pytest",
     "pytest-cov",
     "pre-commit",
