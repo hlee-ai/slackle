@@ -27,7 +27,7 @@
 
 ## 🚀 Features
 
-- ⚡️ **Slash command routing** — Handle `/like`, `/magic`, `/your-command`
+- ⚡️ **Slash command routing** — Handle `/your-command`, `/like`, `/magic`
 - 💬 **Event handling** — `@app_mention`, `message`, `reaction_added`, etc.
 - 🎨 **Slack formatting** — Clean markdown and block formatting made easy
 - 🧩 **Plugin system** — Extend functionality with decorators and custom plugins
