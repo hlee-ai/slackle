@@ -43,7 +43,7 @@ def test_register_command_handler(app):
 
     handler = app.callback.commands.get("/say")
     assert handler is not None
-    assert handler.__name__ == "message_handler"
+    assert handler.__name__ == "command_handler"
 
 
 def test_get_user_mention():
