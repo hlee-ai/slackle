@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
-      contents: read
+      contents: write
 
     steps:
       - name: Check out the code
@@ -20,6 +20,19 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.10"
+
+      - name: Update version in pyproject.toml
+        run: |
+          VERSION="${{ github.event.release.tag_name }}"
+          echo "Updating pyproject.toml version to $VERSION"
+          sed -i "s/^version = \".*\"/version = \"${VERSION#v}\"/" pyproject.toml
+
+      - name: Commit version bump
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git commit -am "chore(release): bump version to ${{ github.event.release.tag_name }}"
+          git push
 
       - name: Install build tools
         run: |
