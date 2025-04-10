@@ -1,5 +1,21 @@
 """
 Slackle App
+
+This module defines the main `Slackle` class, which extends FastAPI to provide a convenient
+interface for building Slack bots using Slackle.
+
+It manages the Slack client, plugin system, and callback handlers,
+and provides decorators for registering Slack events, slash commands, and interactive actions.
+
+Typical usage:
+
+    from slackle.core.app import Slackle
+
+    app = Slackle()
+
+    @app.on_command("/hello")
+    async def handle_hello(app, slack, text, user_id, channel_id):
+        return "Hello there!"
 """
 
 from contextlib import contextmanager
@@ -16,6 +32,20 @@ from .slack.interface import SlackInterface
 
 
 class Slackle(FastAPI):
+    """
+    The main application class for building a Slack bot with Slackle.
+
+    This class serves as the central entry point to the Slackle framework and extends FastAPI.
+    It manages Slack callback registration, plugin integration, and Slack client communication.
+
+    Properties:
+        config (SlackleConfig): Configuration object containing Slack tokens and settings.
+        slack (SlackClient): The Slack WebClient instance used for sending messages and API calls.
+        callback: Dispatcher for Slack events, commands, and interactive actions.
+        hooks (HookDispatcher): Hook system for handling app lifecycle events such as
+        startup and shutdown.
+    """
+
     def __init__(self, *, config: Optional[SlackleConfig] = None, **kwargs):
         super().__init__(**kwargs)
 
@@ -57,13 +87,39 @@ class Slackle(FastAPI):
             raise RuntimeError("Hooks are not available before startup.")
         return self._hook_dispatcher
 
-    def on_event(self, name: str):
+    def on_event(self, name: str) -> Callable:
+        """
+        Register a Slack event handler.
+
+        Args:
+            name (str): The name of the Slack event to listen for (e.g., "app_mention").
+
+        Returns:
+            Callable: A decorator to register the event handler function.
+        """
         return self.callback.event(name)
 
-    def on_command(self, name: str):
+    def on_command(self, name: str) -> Callable:
+        """
+        Register a Slack slash command handler.
+
+        Args:
+            name (str): The name of the slash command (e.g., "/hello").
+
+        Returns:
+            Callable: A decorator to register the command handler function.
+        """
         return self.callback.command(name)
 
-    def on_action(self, name: str):
+    def on_action(self, name: str) -> Callable:
+        """
+        Register a Slack interactive action handler.
+        Args:
+            name (str): The name of the action (e.g., "button_click").
+
+        Returns:
+            Callable: A decorator to register the action handler function.
+        """
         return self.callback.action(name)
 
     @contextmanager
@@ -86,9 +142,28 @@ class Slackle(FastAPI):
         self.__booted = False
 
     def list_plugins(self):
+        """
+        List all registered plugins.
+
+        Returns:
+            List[str]: A list of plugin names.
+        """
         return [plugin.__class__.__name__ for plugin in self._plugins]
 
     def register_plugin_attribute(self, name: str, value: Any, *, override: bool = False):
+        """
+        Register an attribute for the plugin.
+
+        Args:
+            name (str): The name of the attribute.
+            value (Any): The value of the attribute.
+            override (bool): Whether to override an existing attribute. Defaults to False.
+
+        Raises:
+            RuntimeError: If called after the app has started.
+            RuntimeError: If called outside of plugin setup mode.
+            AttributeError: If the attribute already exists and override is False.
+        """
         if self.__booted:
             raise RuntimeError("Cannot register plugin after app startup.")
         if not self.__plugin_setup_mode:
@@ -99,6 +174,18 @@ class Slackle(FastAPI):
         self._plugin_attrs[name] = value
 
     def register_plugin_method(self, name: str, method: Callable, *, override: bool = False):
+        """
+        Register a method for the plugin.
+        Args:
+            name (str): The name of the method.
+            method (Callable): The method to register.
+            override (bool): Whether to override an existing method. Defaults to False.
+
+        Raises:
+            RuntimeError: If called after the app has started.
+            RuntimeError: If called outside of plugin setup mode.
+            AttributeError: If the method already exists and override is False.
+        """
         if self.__booted:
             raise RuntimeError("Cannot register plugin method after app startup.")
         if not self.__plugin_setup_mode:
@@ -109,6 +196,16 @@ class Slackle(FastAPI):
         self._plugin_attrs[name] = method
 
     def add_plugin(self, plugin: Type[SlacklePlugin]):
+        """
+        Register a plugin with the Slackle app.
+
+        Args:
+            plugin (Type[SlacklePlugin]): The plugin class to register.
+
+        Raises:
+            TypeError: If the plugin is not a subclass of SlacklePlugin.
+            ValueError: If the plugin is already registered.
+        """
         with self._plugin_setup():
             if not issubclass(plugin, SlacklePlugin):
                 raise TypeError(
