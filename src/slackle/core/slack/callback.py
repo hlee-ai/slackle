@@ -66,18 +66,30 @@ class SlackCallbackRegistry:
 
     @property
     def callbacks(self) -> dict[str, SlackCallbackHandler]:
+        """
+        Return all registered callbacks.
+        """
         return self._callbacks
 
     @property
     def events(self) -> dict[str, SlackCallbackHandler]:
+        """
+        Return all registered event handlers.
+        """
         return self._events
 
     @property
     def commands(self) -> dict[str, SlackCallbackHandler]:
+        """
+        Return all registered command handlers.
+        """
         return self._commands
 
     @property
     def actions(self) -> dict[str, SlackCallbackHandler]:
+        """
+        Return all registered action handlers.
+        """
         return self._actions
 
     def __contains__(self, callback: str) -> bool:
