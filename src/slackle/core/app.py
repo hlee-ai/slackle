@@ -27,6 +27,7 @@ from slackle.config import SlackleConfig
 from slackle.core.plugin import SlacklePlugin
 
 from .dispatcher import HookDispatcher
+from .slack import SlackCallbackRegistry
 from .slack.client import SlackClient
 from .slack.interface import SlackInterface
 
@@ -71,18 +72,30 @@ class Slackle(FastAPI):
 
     @property
     def config(self) -> SlackleConfig:
+        """
+        Return the configuration object for the Slackle app.
+        """
         return self._config
 
     @property
     def slack(self) -> SlackClient:
+        """
+        Return the Slack client instance used for sending messages and API calls.
+        """
         return self._slack.client
 
     @property
-    def callback(self):
+    def callback(self) -> SlackCallbackRegistry:
+        """
+        Return the callback registry for all registered callbacks.
+        """
         return self._slack.callbacks
 
     @property
     def hooks(self) -> HookDispatcher:
+        """
+        Return the hook dispatcher for managing app lifecycle events.
+        """
         if not hasattr(self, "_hook_dispatcher"):
             raise RuntimeError("Hooks are not available before startup.")
         return self._hook_dispatcher
@@ -124,20 +137,31 @@ class Slackle(FastAPI):
 
     @contextmanager
     def _plugin_setup(self):
+        """
+        Context manager for setting up plugins.
+        """
         self.__plugin_setup_mode = True
         yield
         self.__plugin_setup_mode = False
 
     def _attach_slack_routes(self):
+        """
+        Attach the Slack routes to Slackle app.
+        """
         self.include_router(self._slack.get_payload_router(), prefix="/slack", tags=["slack"])
 
     async def _on_startup(self):
-        # setup hook dispatcher
+        """
+        Emit the startup hook to all registered plugins.
+        """
         self._hook_dispatcher = HookDispatcher(self._plugins)
         self.__booted = True
         await self._hook_dispatcher.emit(self, "startup")
 
     async def _on_shutdown(self):
+        """
+        Emit the shutdown hook to all registered plugins.
+        """
         await self._hook_dispatcher.emit(self, "shutdown")
         self.__booted = False
 
