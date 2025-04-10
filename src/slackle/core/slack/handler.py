@@ -1,10 +1,27 @@
+"""
+Slack Payload Handler
+
+This module defines a central handler and router for incoming Slack payloads.
+
+This class receives slack payloads such as events, slash commands, and interactive payloads,
+then dispatches them to the appropriate callback handlers.
+
+It also supports:
+- Pre- and post-processing hooks (`slack.pre_handle`, `slack.post_handle`)
+- Retry and token validation handling
+- Merging external callback registries
+- Route generation for FastAPI (`self.router`)
+
+Typically, this is included into the Slackle app to provide the `/slack/...` routes.
+"""
+
 import inspect
 from typing import TYPE_CHECKING, Annotated, Awaitable, Callable, Type
 
 from fastapi import APIRouter, BackgroundTasks, Depends, Request, Response, status
 from pydantic import BaseModel
 
-from slackle.core.slack.callback import SlackCallback
+from slackle.core.slack.callback import SlackCallbackRegistry
 from slackle.dependencies import get_app
 from slackle.types.context import SlackleContext
 from slackle.types.payload import (
@@ -19,6 +36,19 @@ if TYPE_CHECKING:
 
 
 class SlackPayloadHandler:
+    """
+    Central handler for Slack payloads.
+
+    This class is responsible for routing incoming Slack payloads to the appropriate
+    callback handlers. It also provides pre- and post-processing hooks for custom logic
+    before and after the handler is called.
+    It supports handling different types of payloads, including events, commands,
+    and interactive actions.
+
+    Properties:
+        callbacks (SlackCallbackRegistry): Registry for all registered callbacks.
+    """
+
     _ROUTES = [
         ("events", SlackEventPayload),
         ("command", SlackCommandPayload, True),
@@ -26,12 +56,17 @@ class SlackPayloadHandler:
     ]
 
     def __init__(self):
-        self._callback_registry: SlackCallback = SlackCallback()
+        self._callback_registry: SlackCallbackRegistry = SlackCallbackRegistry()
         self.router = APIRouter()
         self._register_routes()
 
     @property
-    def callbacks(self) -> SlackCallback:
+    def callbacks(self) -> SlackCallbackRegistry:
+        """
+        Return the callback registry for all registered callbacks.
+
+        This allows direct access to the registered callbacks for events, commands,
+        """
         return self._callback_registry
 
     async def _pre_handle(
@@ -183,6 +218,10 @@ class SlackPayloadHandler:
         [Request, Response, SlackPayload, BackgroundTasks, "Slackle"],
         Awaitable[Response],
     ]:
+        """
+        Create a handler for the given payload type.
+        """
+
         async def payload_handler(
             request: Request,
             response: Response,
@@ -219,6 +258,9 @@ class SlackPayloadHandler:
             )
 
     def _extract_handle_name(self, handle_type: str, payload: SlackPayload) -> str:
+        """
+        Extract the handle name from the payload based on the handle type.
+        """
         match handle_type:
             case "events":
                 return payload.event.type
@@ -231,8 +273,15 @@ class SlackPayloadHandler:
             case _:
                 raise ValueError("Unsupported handle_type")
 
-    def include_callback(self, callback: SlackCallback) -> None:
+    def include_callback(self, callback: SlackCallbackRegistry) -> None:
         """
         Include a callback registry into the current handler.
+        This allows you to merge multiple callback registries into one.
+
+        Args:
+            callback (SlackCallbackRegistry): The callback registry to include.
         """
         self._callback_registry.update_from(callback)
+
+
+__all__ = ["SlackPayloadHandler"]
