@@ -194,6 +194,9 @@ class SlackPayloadHandler:
         ):
             if app.config.debug:
                 print(payload)
+            # if the payload is a SlackEventPayload and it has a challenge, return it
+            if isinstance(payload, SlackEventPayload) and payload.challenge:
+                return Response(content=payload.challenge, media_type="text/plain")
             background_tasks.add_task(
                 self._handle,
                 handle_type,
