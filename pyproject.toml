@@ -1,6 +1,6 @@
 [project]
 name = "slackle"
-version = "0.2.5"
+version = "0.2.6"
 description = "A lightweight Slack bot framework for building modular and maintainable Slack bots."
 
 authors = [
@@ -53,7 +53,7 @@ pythonpath = [
 
 [tool.commitizen]
 name = "cz_conventional_commits"
-version = "0.2.5"
+version = "0.2.6"
 tag_format = "v$version"
 
 [tool.black]
