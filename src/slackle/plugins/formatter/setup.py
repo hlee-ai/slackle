@@ -8,7 +8,7 @@ class FormatterPlugin(SlacklePlugin):
     def setup(self, app: Slackle):
         formatter = Formatter()
 
-        def include_formatter(self, formatter: Formatter, override: bool = False):
+        def include_formatter(formatter: Formatter, override: bool = False):
             if override or not hasattr(self, "formatter"):
                 self.formatter = formatter
             else:

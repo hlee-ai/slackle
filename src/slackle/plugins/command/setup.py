@@ -11,7 +11,6 @@ class CommandPlugin(SlacklePlugin):
         command = SlackCommand()
 
         def include_command(
-            self,
             command_registry: SlackCommand,
             group: Optional[str] = None,
             override_group: bool = False,
